@@ -1,10 +1,13 @@
 package lesson1
 
 import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import util.PerfResult
 import util.estimate
 import java.io.BufferedWriter
 import java.io.File
+import java.io.IOException
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.math.abs
 import kotlin.system.measureNanoTime
@@ -27,7 +30,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Обычный случай
         try {
             sortTimes("input/time_in2.txt", "temp.txt")
             assertFileContent(
@@ -38,13 +41,50 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Краевой случай (Единственная строка)
+        try {
+            assertThrows(IllegalArgumentException::class.java) {
+                sortTimes("input/time_in4.txt", "temp.txt")
+            }
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Неверный формат строки)
+        try {
+            sortTimes("input/time_in5.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                     12:40:31 AM
+                     07:26:57 AM
+                     10:00:03 AM
+                     01:15:19 PM
+                     01:15:19 PM
+                     07:56:14 PM
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Время в правильном порядке изначально)
+        try {
+            sortTimes("input/time_in6.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    12:40:31 AM
+                    12:40:31 AM
+                    12:40:31 AM
+                    12:40:31 AM
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Все показатели времени одинаковые)
         try {
             sortTimes("input/time_in3.txt", "temp.txt")
             assertFileContent("temp.txt", File("input/time_out3.txt").readLines())
         } finally {
             File("temp.txt").delete()
-        }
+        } //Длинный случай (На производительность)
     }
 
     protected fun sortAddresses(sortAddresses: (String, String) -> Unit) {
@@ -117,7 +157,56 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Обычный случай
+        try {
+            sortTemperatures("input/temp_in2.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    18.0
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Единственная строка)
+        try {
+            assertThrows(NumberFormatException::class.java) {
+                sortTemperatures("input/temp_in3.txt", "temp.txt")
+            }
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Неверный формат строки)
+        try {
+            sortTemperatures("input/temp_in4.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    -98.4
+                    -12.6
+                    -12.6
+                    11.0
+                    24.7
+                    99.5
+                    121.3
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Температура в правильном порядке изначально)
+        try {
+            sortTemperatures("input/temp_in5.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    11.0
+                    11.0
+                    11.0
+                    11.0
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Все показатели температуры одинаковые)
 
         fun testGeneratedTemperatures(size: Int): PerfResult<Unit> {
             try {
@@ -130,7 +219,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
                 File("temp_sorted_expected.txt").delete()
                 File("temp_sorted_actual.txt").delete()
             }
-        }
+        } //Длинный случай (На производительность)
 
         val perf = estimate(listOf(10, 100, 1000)) {
             testGeneratedTemperatures(it)
@@ -198,7 +287,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Обычный случай
         try {
             sortSequence("input/seq_in2.txt", "temp.txt")
             assertFileContent(
@@ -217,7 +306,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Краевой случай (Все числа повторяются равное количество раз)
         try {
             sortSequence("input/seq_in3.txt", "temp.txt")
             assertFileContent(
@@ -236,7 +325,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Краевой случай (Все числа повторяются равное количество раз)
         try {
             sortSequence("input/seq_in4.txt", "temp.txt")
             assertFileContent(
@@ -256,7 +345,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Обычный случай
         try {
             sortSequence("input/seq_in5.txt", "temp.txt")
             assertFileContent(
@@ -276,7 +365,57 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             )
         } finally {
             File("temp.txt").delete()
-        }
+        } //Обычный случай
+        try {
+            sortSequence("input/seq_in6.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    18
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Единственная строка)
+        try {
+            assertThrows(NumberFormatException::class.java) {
+                sortSequence("input/seq_in7.txt", "temp.txt")
+            }
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Неверный формат строки)
+        try {
+            sortSequence("input/seq_in8.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    1
+                    3
+                    3
+                    1
+                    2
+                    2
+                    2
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Числа в правильном порядке изначально)
+        try {
+            sortSequence("input/seq_in9.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    11
+                    11
+                    11
+                    11
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        } //Краевой случай (Все показатели температуры одинаковые)
+
 
         fun testGeneratedSequence(totalSize: Int, answerSize: Int): PerfResult<Unit> {
             try {
@@ -293,7 +432,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
 
         val perf = estimate(listOf(1_000, 10_000, 100_000, 1_000_000)) {
             testGeneratedSequence(it, it / 20)
-        }
+        } //Длинный случай (на произовдительность)
 
         println("sortSequence: $perf")
     }

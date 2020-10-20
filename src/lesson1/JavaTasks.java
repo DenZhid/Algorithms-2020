@@ -1,6 +1,7 @@
 package lesson1;
 
-import kotlin.NotImplementedError;
+import java.io.*;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class JavaTasks {
@@ -34,8 +35,72 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public void sortTimes(String inputName, String outputName) {
-        throw new NotImplementedError();
+    //Трудоёмкость - O(NlogN)
+    //Ресурсоёмкость - R(N)
+    static public void sortTimes(String inputName, String outputName) throws IOException {
+        List<Integer> am = new ArrayList<>();
+        List<Integer> pm = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(inputName));
+        String line = reader.readLine();
+        while (line != null) {
+            if (!line.trim().matches("^(0[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9] [AP]M$")) {
+                throw new IllegalArgumentException();
+            }
+            if (line.split(" ")[1].equals("AM")) {
+                am.add(toNumber(line));
+            }
+            else {
+                pm.add(toNumber(line));
+            }
+            line = reader.readLine();
+        }
+        reader.close();
+        Collections.sort(am);
+        Collections.sort(pm);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
+        am.forEach (element -> {
+            int hours = element / 10000;
+            int minutes = (element / 100) % 100;
+            int seconds = element % 100;
+            if (hours == 0) {
+                hours = 12;
+            }
+            try {
+                writer.write(String.valueOf(new Formatter().format("%02d:%02d:%02d AM", hours, minutes, seconds)));
+                writer.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        pm.forEach(element -> {
+            int hours = element / 10000;
+            int minutes = (element / 100) % 100;
+            int seconds = element % 100;
+            if (hours == 0) {
+                hours = 12;
+            }
+            try {
+                writer.write(String.valueOf(new Formatter().format("%02d:%02d:%02d PM", hours, minutes, seconds)));
+                writer.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        writer.close();
+    }
+
+    private static int toNumber(String str) {
+        String[] time = str.split(" ")[0].split(":");
+        StringBuilder number = new StringBuilder();
+        if (time[0].equals("12")) {
+            number.append("0");
+        } else {
+            number.append(time[0]);
+        }
+        for (int i = 1; i <= 2; i++) {
+            number.append(time[i]);
+        }
+        return Integer.parseInt(number.toString());
     }
 
     /**
@@ -64,8 +129,96 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public void sortAddresses(String inputName, String outputName) {
-        throw new NotImplementedError();
+    static public void sortAddresses(String inputName, String outputName) throws IOException {
+        /*Comparator<String> CForNames = (s, t1) -> {
+            while (!s.equals("") && !t1.equals("")) {
+                int codeOfSSymbol = s.charAt(0);
+                int codeOfT1Symbol = t1.charAt(0);
+                if (codeOfSSymbol > codeOfT1Symbol) {
+                    return 1;
+                }
+                else if (codeOfSSymbol < codeOfT1Symbol) {
+                    return -1;
+                }
+                else {
+                    s = s.substring(1);
+                    t1 = t1.substring(1);
+                }
+            }
+            if (s.equals("") && !t1.equals("")) {
+                return -1;
+            }
+            else if (!s.equals("")) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
+        Comparator<String> CForAddresses = (s, t1) -> {
+            String nameOfS = s.split(" ")[0];
+            int numbOfS = Integer.parseInt(s.split(" ")[1]);
+            String nameOfT1 = t1.split(" ")[0];
+            int numbOfT1 = Integer.parseInt(t1.split(" ")[1]);
+            while (!nameOfS.equals("") && !nameOfT1.equals("")) {
+                int codeOfSSymbol = nameOfS.charAt(0);
+                int codeOfT1Symbol = nameOfT1.charAt(0);
+                if (codeOfSSymbol > codeOfT1Symbol) {
+                    return 1;
+                }
+                else if (codeOfSSymbol < codeOfT1Symbol) {
+                    return -1;
+                }
+                else {
+                    nameOfS = nameOfS.substring(1);
+                    nameOfT1 = nameOfT1.substring(1);
+                }
+            }
+            if (nameOfS.equals("") && !nameOfT1 .equals("")) {
+                return -1;
+            }
+            else if (!nameOfS.equals("")) {
+                return 1;
+            }
+            else {
+                return Integer.compare(numbOfS, numbOfT1);
+            }
+        };
+        SortedMap<String, List<String>> addressBook = new TreeMap<>(CForAddresses);
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(inputName), StandardCharsets.UTF_8)
+        );
+        String line = reader.readLine();
+        while (line != null) {
+            if(!line.trim().matches("^([А-Я]([а-я])* ){2}- ([А-я-ё]* [0-9]+)$")) {
+                throw new IllegalArgumentException();
+            }
+            String address = line.split(" - ")[1];
+            String name = line.split(" - ")[0];
+            if (!addressBook.containsKey(line.split(" - ")[1])) {
+                addressBook.put(address, new ArrayList<>());
+                addressBook.get(address).add(name);
+            }
+            else {
+                addressBook.get(address).add(name);
+                addressBook.get(address).sort(CForNames);
+            }
+            line = reader.readLine();
+        }
+        reader.close();
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(outputName), StandardCharsets.UTF_8)
+        );
+        for (String key : addressBook.keySet()) {
+            writer.write(key + " - ");
+            for (int i = 0; i < addressBook.get(key).size(); i++) {
+                writer.write(addressBook.get(key).get(i));
+                if (i != addressBook.get(key).size() - 1) {
+                    writer.write(", ");
+                }
+            }
+            writer.newLine();
+        }
+        writer.close();*/
     }
 
     /**
@@ -98,8 +251,26 @@ public class JavaTasks {
      * 99.5
      * 121.3
      */
-    static public void sortTemperatures(String inputName, String outputName) {
-        throw new NotImplementedError();
+    //Трудоёмкость - O(NlogN)
+    //Ресурсоёмоксть - R(N)
+    static public void sortTemperatures(String inputName, String outputName) throws IOException {
+        SortedMap<Double, Integer> temperatures = new TreeMap<>();
+        BufferedReader reader = new BufferedReader(new FileReader(inputName));
+        String line = reader.readLine();
+        while (line != null) {
+           double number = Double.parseDouble(line);
+           temperatures.merge(number, 1, Integer::sum);
+           line = reader.readLine();
+        }
+        reader.close();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
+        for (double key : temperatures.keySet()) {
+            for (int i = 0; i < temperatures.get(key); i++) {
+                writer.write(String.valueOf(key));
+                writer.newLine();
+            }
+        }
+        writer.close();
     }
 
     /**
@@ -131,8 +302,47 @@ public class JavaTasks {
      * 2
      * 2
      */
-    static public void sortSequence(String inputName, String outputName) {
-        throw new NotImplementedError();
+    //Трудоёмкость - O(N)
+    //Ресурсоёмкость - R(N)
+    static public void sortSequence(String inputName, String outputName) throws IOException {
+        Map<Integer, Integer> mapOfQuantity = new HashMap<>();
+        List<Integer> sequence = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(inputName));
+        String line = reader.readLine();
+        int max = 0;
+        while (line != null) {
+            int number = Integer.parseInt(line);
+            mapOfQuantity.merge(number, 1, Integer::sum);
+            sequence.add(number);
+            if (mapOfQuantity.get(number) > max) {
+                max = mapOfQuantity.get(number);
+            }
+            line = reader.readLine();
+        }
+        reader.close();
+        Set<Map.Entry<Integer, Integer>> entrySet = mapOfQuantity.entrySet();
+        List<Integer> listOfRecurringKeys = new ArrayList<>();
+        int min = Integer.MAX_VALUE;
+        for (Map.Entry<Integer, Integer> pair : entrySet) {
+            if (max == pair.getValue()) {
+                if (pair.getKey() < min) {
+                    min = pair.getKey();
+                }
+            }
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
+        for (Integer number: sequence) {
+            if (number != min) {
+                writer.write(String.valueOf(number));
+                writer.newLine();
+            }
+        }
+        while (max > 0) {
+            writer.write(String.valueOf(min));
+            writer.newLine();
+            max--;
+        }
+        writer.close();
     }
 
     /**
@@ -150,6 +360,5 @@ public class JavaTasks {
      * Результат: second = [1 3 4 9 9 13 15 20 23 28]
      */
     static <T extends Comparable<T>> void mergeArrays(T[] first, T[] second) {
-        throw new NotImplementedError();
     }
 }
