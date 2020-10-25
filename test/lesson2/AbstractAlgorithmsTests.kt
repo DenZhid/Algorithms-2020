@@ -74,9 +74,9 @@ abstract class AbstractAlgorithmsTests {
     }
 
     fun longestCommonSubstring(longestCommonSubstring: (String, String) -> String) {
-        assertEquals("", longestCommonSubstring("мой мир", "я"))
-        assertEquals("зд", longestCommonSubstring("здравствуй мир", "мы здесь"))
-        assertEquals("СЕРВАТОР", longestCommonSubstring("ОБСЕРВАТОРИЯ", "КОНСЕРВАТОРЫ"))
+        assertEquals("", longestCommonSubstring("мой мир", "я")) //Краевой случай
+        assertEquals("зд", longestCommonSubstring("здравствуй мир", "мы здесь")) //Обычный случай
+        assertEquals("СЕРВАТОР", longestCommonSubstring("ОБСЕРВАТОРИЯ", "КОНСЕРВАТОРЫ")) //Обычный случай
         assertEquals(
             "огда ", longestCommonSubstring(
                 """
@@ -112,37 +112,53 @@ abstract class AbstractAlgorithmsTests {
 Но вреден север для меня
                 """.trimIndent()
             )
-        )
+        ) //Длинный случай
         assertEquals(
             "(с) Этот весь длинный-длинный текст является цитатой из Пушкина, поэма \"Руслан и Людмила\"",
             longestCommonSubstring(
                 File("input/ruslan_ludmila_1.txt").readText(),
                 File("input/ruslan_ludmila_2.txt").readText()
             ).trim()
-        )
+        )//Длинный случай
+        assertEquals(
+            "Французские ",
+            longestCommonSubstring(
+                "Французские булки",
+                "Французские рульки"
+            )
+        )//Обычный случай
+        assertEquals(
+            "",
+            longestCommonSubstring(
+                "Зачем",
+                "это"
+            )
+        )//Краевой случай
     }
 
     fun calcPrimesNumber(calcPrimesNumber: (Int) -> Int) {
-        assertEquals(0, calcPrimesNumber(-1))
-        assertEquals(0, calcPrimesNumber(1))
-        assertEquals(1, calcPrimesNumber(2))
-        assertEquals(2, calcPrimesNumber(4))
-        assertEquals(4, calcPrimesNumber(10))
-        assertEquals(8, calcPrimesNumber(20))
-        assertEquals(1000, calcPrimesNumber(7920))
-        assertEquals(1229, calcPrimesNumber(10000))
-        assertEquals(2262, calcPrimesNumber(20000))
-        assertEquals(5133, calcPrimesNumber(50000))
-        assertEquals(9592, calcPrimesNumber(100000))
-        assertEquals(17984, calcPrimesNumber(200000))
-        assertEquals(33860, calcPrimesNumber(400000))
-        assertEquals(49098, calcPrimesNumber(600000))
-        assertEquals(56543, calcPrimesNumber(700000))
-        assertEquals(63951, calcPrimesNumber(800000))
-        assertEquals(71274, calcPrimesNumber(900000))
-        assertEquals(78498, calcPrimesNumber(1000000))
-        assertEquals(148933, calcPrimesNumber(2000000))
-        assertEquals(348513, calcPrimesNumber(5000000))
-        assertEquals(664579, calcPrimesNumber(10000000))
+        assertEquals(0, calcPrimesNumber(-1)) //Краевой случай
+        assertEquals(0, calcPrimesNumber(1)) //Краевой случай
+        assertEquals(1, calcPrimesNumber(2)) //Обычный случай
+        assertEquals(2, calcPrimesNumber(4)) //Обычный случай
+        assertEquals(4, calcPrimesNumber(10)) //Обычный случай
+        assertEquals(8, calcPrimesNumber(20)) //Обычный случай
+        assertEquals(1000, calcPrimesNumber(7920)) //Обычный случай
+        assertEquals(1229, calcPrimesNumber(10000)) //Длинный случай
+        assertEquals(2262, calcPrimesNumber(20000)) //Длинный случай
+        assertEquals(5133, calcPrimesNumber(50000)) //Длинный случай
+        assertEquals(9592, calcPrimesNumber(100000)) //Длинный случай
+        assertEquals(17984, calcPrimesNumber(200000)) //Длинный случай
+        assertEquals(33860, calcPrimesNumber(400000)) //Длинный случай
+        assertEquals(49098, calcPrimesNumber(600000)) //Длинный случай
+        assertEquals(56543, calcPrimesNumber(700000)) //Длинный случай
+        assertEquals(63951, calcPrimesNumber(800000)) //Длинный случай
+        assertEquals(71274, calcPrimesNumber(900000)) //Длинный случай
+        assertEquals(78498, calcPrimesNumber(1000000)) //Длинный случай
+        assertEquals(148933, calcPrimesNumber(2000000)) //Длинный случай
+        assertEquals(348513, calcPrimesNumber(5000000)) //Длинный случай
+        assertEquals(664579, calcPrimesNumber(10000000)) //Длинный случай
+        assertEquals(0, calcPrimesNumber(0)) //Краевой случай
+        assertEquals(3, calcPrimesNumber(5)) //Обычный случай
     }
 }

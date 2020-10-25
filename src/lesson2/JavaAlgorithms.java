@@ -3,6 +3,8 @@ package lesson2;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 
+import static java.lang.Math.sqrt;
+
 @SuppressWarnings("unused")
 public class JavaAlgorithms {
     /**
@@ -98,7 +100,30 @@ public class JavaAlgorithms {
      * вернуть ту из них, которая встречается раньше в строке first.
      */
     static public String longestCommonSubstring(String firs, String second) {
-        throw new NotImplementedError();
+        String maxSubstring = "";
+        String newSubstring;
+        if (firs.length() > second.length()) {
+            for (int i = 1; i <= second.length(); i++) {
+                for (int j = 0; i + j <= second.length(); j++) {
+                    newSubstring = firs.substring(j, i + j);
+                    if (second.contains(newSubstring)) {
+                        maxSubstring = newSubstring;
+                        break;
+                    }
+                }
+            }
+        } else  {
+            for (int i = 1; i <= firs.length(); i++) {
+                for (int j = 0; i + j <= firs.length(); j++) {
+                    newSubstring = firs.substring(j, i + j);
+                    if (second.contains(newSubstring)) {
+                        maxSubstring = newSubstring;
+                        break;
+                    }
+                }
+            }
+        }
+        return maxSubstring;
     }
 
     /**
@@ -111,7 +136,30 @@ public class JavaAlgorithms {
      * Справка: простым считается число, которое делится нацело только на 1 и на себя.
      * Единица простым числом не считается.
      */
+    //Трудоёмкость O(N)
+    //Ресурсоёмкость O(1)
     static public int calcPrimesNumber(int limit) {
-        throw new NotImplementedError();
+        int result = 0;
+        if (limit > 1) {
+            for (int i = 1; i <= limit; i++) {
+                if (isPrime(i)) {
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    static private boolean isPrime(int n) {
+        if (n == 2) {
+            return true;
+        }
+        if (n < 2 || n % 2 == 0) {
+            return false;
+        }
+        for (int m = 3 ; m <= sqrt(n); m += 2){
+            if (n % m == 0) return false;
+        }
+        return true;
     }
 }
