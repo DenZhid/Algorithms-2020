@@ -99,31 +99,30 @@ public class JavaAlgorithms {
      * Если имеется несколько самых длинных общих подстрок одной длины,
      * вернуть ту из них, которая встречается раньше в строке first.
      */
+    //Трудоёмкость O(N*M)
+    //Ресурсоёмкость O(N*M), где N и M - соответствующие длины строк
     static public String longestCommonSubstring(String firs, String second) {
-        String maxSubstring = "";
-        String newSubstring;
-        if (firs.length() > second.length()) {
-            for (int i = 1; i <= second.length(); i++) {
-                for (int j = 0; i + j <= second.length(); j++) {
-                    newSubstring = firs.substring(j, i + j);
-                    if (second.contains(newSubstring)) {
-                        maxSubstring = newSubstring;
-                        break;
-                    }
-                }
-            }
-        } else  {
-            for (int i = 1; i <= firs.length(); i++) {
-                for (int j = 0; i + j <= firs.length(); j++) {
-                    newSubstring = firs.substring(j, i + j);
-                    if (second.contains(newSubstring)) {
-                        maxSubstring = newSubstring;
-                        break;
+        int[][] similarityTable = new int[firs.length()][second.length()];
+        int max = 0;
+        String result = "";
+        for (int i = 0; i < firs.length(); i++) {
+            for (int j = 0; j < second.length(); j++) {
+                if (firs.charAt(i) != second.charAt(j)) {
+                    similarityTable[i][j] = 0;
+                } else {
+                        if (i== 0 || j == 0) {
+                            similarityTable[i][j] = 1;
+                        } else {
+                            similarityTable[i][j] = 1 + similarityTable[i - 1][j - 1];
+                        }
+                    if (similarityTable[i][j] > max) {
+                        max = similarityTable[i][j];
+                        result = firs.substring(i - max + 1, i + 1);
                     }
                 }
             }
         }
-        return maxSubstring;
+        return result;
     }
 
     /**
