@@ -110,10 +110,8 @@ public class JavaAlgorithms {
                 if (firs.charAt(i) != second.charAt(j)) {
                     similarityTable[i][j] = 0;
                 } else {
-                        if (i== 0 || j == 0) {
-                            similarityTable[i][j] = 1;
-                        } else {
-                            similarityTable[i][j] = 1 + similarityTable[i - 1][j - 1];
+                        similarityTable[i][j] = (i== 0 || j == 0) ? 1
+                                                                  : 1 + similarityTable[i - 1][j - 1];
                         }
                     if (similarityTable[i][j] > max) {
                         max = similarityTable[i][j];
@@ -121,9 +119,9 @@ public class JavaAlgorithms {
                     }
                 }
             }
-        }
         return result;
     }
+
 
     /**
      * Число простых чисел в интервале
@@ -135,9 +133,10 @@ public class JavaAlgorithms {
      * Справка: простым считается число, которое делится нацело только на 1 и на себя.
      * Единица простым числом не считается.
      */
-    //Трудоёмкость O(N)
+    //Трудоёмкость O(sqrt(N))
     //Ресурсоёмкость O(1)
     static public int calcPrimesNumber(int limit) {
+        System.out.println("Для" + limit);
         int result = 0;
         if (limit > 1) {
             for (int i = 1; i <= limit; i++) {

@@ -99,10 +99,61 @@ public class BinarySearchTree<T extends Comparable<T>> extends AbstractSet<T> im
      *
      * Средняя
      */
+    //Трудоёмкость O(N) - худший случай
+    //Трудоёмкость O(log(N)) - средний случай, где N - количество узлов
+    //Трдоёмкость O(h), где h - высота дерева
+    //Ресурсоёмкость R(1)
     @Override
     public boolean remove(Object o) {
-        // TODO
-        throw new NotImplementedError();
+        T t = (T) o;
+        if (root == null) {
+            return false;
+        }
+        Node<T> parentOfDelNode = root;
+        Node<T> delNode = root;
+        while (delNode != null && delNode.value != t ) {
+            parentOfDelNode = delNode;
+            if (t.compareTo(parentOfDelNode.value) < 0) {
+                delNode = delNode.left;
+            } else {
+                delNode = delNode.right;
+            }
+        }
+        if (delNode == null) {
+            return false;
+        }
+        if (delNode.right == null && delNode.left == null) {
+            replace(parentOfDelNode, delNode, null);
+        } else if (delNode.right != null && delNode.left == null) {
+            replace(parentOfDelNode, delNode, delNode.right);
+        } else if (delNode.right == null) {
+            replace(parentOfDelNode, delNode, delNode.left);
+        } else {
+            Node<T> newNode = delNode.right;
+            Node<T> parentOfNewNode = delNode;
+            while (newNode.left != null) {
+                parentOfNewNode = newNode;
+                newNode = newNode.left;
+            }
+            if (newNode != delNode.right) {
+                parentOfNewNode.left = newNode.right;
+                newNode.right = delNode.right;
+            }
+            newNode.left = delNode.left;
+            replace(parentOfDelNode, delNode, newNode);
+        }
+        size--;
+        return true;
+    }
+
+    private void replace(Node<T> parentNode, Node<T> nodeToReplace, Node<T> value) {
+        if (nodeToReplace == root) {
+            root = value;
+        } else if (nodeToReplace == parentNode.left) {
+            parentNode.left = value;
+        } else {
+            parentNode.right = value;
+        }
     }
 
     @Nullable
@@ -119,6 +170,10 @@ public class BinarySearchTree<T extends Comparable<T>> extends AbstractSet<T> im
 
     public class BinarySearchTreeIterator implements Iterator<T> {
 
+        private Stack<Node<T>> stackOfNodes = new Stack<>();
+        private Node<T> currentNode = root;
+        private Node<T> lastNode = null;
+
         private BinarySearchTreeIterator() {
             // Добавьте сюда инициализацию, если она необходима.
         }
@@ -134,9 +189,10 @@ public class BinarySearchTree<T extends Comparable<T>> extends AbstractSet<T> im
          * Средняя
          */
         @Override
+        //Трудоёмкость O(1)
+        //Ресурсоёмкость O(1)
         public boolean hasNext() {
-            // TODO
-            throw new NotImplementedError();
+        return !stackOfNodes.empty() || currentNode != null;
         }
 
         /**
@@ -153,10 +209,21 @@ public class BinarySearchTree<T extends Comparable<T>> extends AbstractSet<T> im
          * Средняя
          */
         @Override
+        //Трудоёмкость O(log(N))
+        //Ресурсоёмкость O(1)
         public T next() {
-            // TODO
-            throw new NotImplementedError();
-        }
+            while (currentNode != null) {
+                stackOfNodes.push(currentNode);
+                currentNode = currentNode.left;
+            }
+            if (!hasNext()) throw new IllegalStateException();
+            currentNode = stackOfNodes.pop();
+            T result  = currentNode.value;
+            lastNode = currentNode;
+            currentNode = currentNode.right;
+            return result;
+            }
+
 
         /**
          * Удаление предыдущего элемента
@@ -170,10 +237,13 @@ public class BinarySearchTree<T extends Comparable<T>> extends AbstractSet<T> im
          *
          * Сложная
          */
+        //Трудоёмксоть O(N)
+        //Ресурсоёмкость O(1)
         @Override
         public void remove() {
-            // TODO
-            throw new NotImplementedError();
+          if (lastNode == null) throw new IllegalStateException();
+          BinarySearchTree.this.remove(lastNode.value);
+          lastNode = null;
         }
     }
 

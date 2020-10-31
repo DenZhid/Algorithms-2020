@@ -40,27 +40,34 @@ public class JavaTasks {
     //Трудоёмкость - O(NlogN)
     //Ресурсоёмкость - R(N)
     static public void sortTimes(String inputName, String outputName) throws IOException {
-        List<Integer> am = new ArrayList<>();
-        List<Integer> pm = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(inputName));
-        String line = reader.readLine();
-        while (line != null) {
-            if (!line.trim().matches("^(0[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9] [AP]M$")) {
-                throw new IllegalArgumentException();
+        try (
+                BufferedReader reader = new BufferedReader(new FileReader(inputName));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outputName))
+        ) {
+            List<Integer> am = new ArrayList<>();
+            List<Integer> pm = new ArrayList<>();
+            String line = reader.readLine();
+            while (line != null) {
+                if (!line.trim().matches("^(0[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9] [AP]M$")) {
+                    throw new IllegalArgumentException();
+                }
+                if (line.split(" ")[1].equals("AM")) {
+                    am.add(toNumber(line));
+                }
+                else {
+                    pm.add(toNumber(line));
+                }
+                line = reader.readLine();
             }
-            if (line.split(" ")[1].equals("AM")) {
-                am.add(toNumber(line));
-            }
-            else {
-                pm.add(toNumber(line));
-            }
-            line = reader.readLine();
+            Collections.sort(am);
+            Collections.sort(pm);
+            writeList(am,"AM", writer);
+            writeList(pm,"PM", writer);
         }
-        reader.close();
-        Collections.sort(am);
-        Collections.sort(pm);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
-        am.forEach (element -> {
+    }
+
+    private static void writeList(List<Integer> entryList, String partOfTheDay, BufferedWriter writer) {
+        entryList.forEach (element -> {
             int hours = element / 10000;
             int minutes = (element / 100) % 100;
             int seconds = element % 100;
@@ -68,27 +75,15 @@ public class JavaTasks {
                 hours = 12;
             }
             try {
-                writer.write(String.valueOf(new Formatter().format("%02d:%02d:%02d AM", hours, minutes, seconds)));
+                writer.write(String.valueOf(
+                        new Formatter().format("%02d:%02d:%02d %s", hours, minutes, seconds, partOfTheDay))
+                );
                 writer.newLine();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
+                System.out.println("There was IOException");
             }
         });
-        pm.forEach(element -> {
-            int hours = element / 10000;
-            int minutes = (element / 100) % 100;
-            int seconds = element % 100;
-            if (hours == 0) {
-                hours = 12;
-            }
-            try {
-                writer.write(String.valueOf(new Formatter().format("%02d:%02d:%02d PM", hours, minutes, seconds)));
-                writer.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        writer.close();
     }
 
     private static int toNumber(String str) {
