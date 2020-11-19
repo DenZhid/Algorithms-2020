@@ -110,9 +110,8 @@ public class JavaAlgorithms {
                 if (firs.charAt(i) != second.charAt(j)) {
                     similarityTable[i][j] = 0;
                 } else {
-                        similarityTable[i][j] = (i== 0 || j == 0) ? 1
-                                                                  : 1 + similarityTable[i - 1][j - 1];
-                        }
+                        similarityTable[i][j] = (i== 0 || j == 0) ? 1 : 1 + similarityTable[i - 1][j - 1];
+                }
                     if (similarityTable[i][j] > max) {
                         max = similarityTable[i][j];
                         result = firs.substring(i - max + 1, i + 1);
@@ -133,7 +132,7 @@ public class JavaAlgorithms {
      * Справка: простым считается число, которое делится нацело только на 1 и на себя.
      * Единица простым числом не считается.
      */
-    //Трудоёмкость O(sqrt(N))
+    //Трудоёмкость O(N*sqrt(N))
     //Ресурсоёмкость O(1)
     static public int calcPrimesNumber(int limit) {
         System.out.println("Для" + limit);

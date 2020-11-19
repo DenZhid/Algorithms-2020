@@ -174,7 +174,7 @@ public class BinarySearchTree<T extends Comparable<T>> extends AbstractSet<T> im
         private Node<T> currentNode = root;
         private Node<T> lastNode = null;
 
-        private BinarySearchTreeIterator() {
+         private BinarySearchTreeIterator() {
             // Добавьте сюда инициализацию, если она необходима.
         }
 
@@ -241,9 +241,9 @@ public class BinarySearchTree<T extends Comparable<T>> extends AbstractSet<T> im
         //Ресурсоёмкость O(1)
         @Override
         public void remove() {
-          if (lastNode == null) throw new IllegalStateException();
-          BinarySearchTree.this.remove(lastNode.value);
-          lastNode = null;
+            if (lastNode == null) throw new IllegalStateException();
+            BinarySearchTree.this.remove(lastNode.value);
+            lastNode = null;
         }
     }
 

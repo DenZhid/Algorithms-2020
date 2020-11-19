@@ -66,24 +66,19 @@ public class JavaTasks {
         }
     }
 
-    private static void writeList(List<Integer> entryList, String partOfTheDay, BufferedWriter writer) {
-        entryList.forEach (element -> {
+    private static void writeList(List<Integer> entryList, String partOfTheDay, BufferedWriter writer) throws IOException {
+        for (Integer element : entryList) {
             int hours = element / 10000;
             int minutes = (element / 100) % 100;
             int seconds = element % 100;
             if (hours == 0) {
                 hours = 12;
             }
-            try {
-                writer.write(String.valueOf(
-                        new Formatter().format("%02d:%02d:%02d %s", hours, minutes, seconds, partOfTheDay))
-                );
-                writer.newLine();
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                System.out.println("There was IOException");
-            }
-        });
+            writer.write(String.valueOf(
+                    new Formatter().format("%02d:%02d:%02d %s", hours, minutes, seconds, partOfTheDay))
+            );
+            writer.newLine();
+        }
     }
 
     private static int toNumber(String str) {

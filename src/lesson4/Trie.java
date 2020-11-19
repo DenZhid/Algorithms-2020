@@ -1,6 +1,7 @@
 package lesson4;
 
 import java.util.*;
+
 import kotlin.NotImplementedError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,8 +93,65 @@ public class Trie extends AbstractSet<String> implements Set<String> {
     @NotNull
     @Override
     public Iterator<String> iterator() {
-        // TODO
-        throw new NotImplementedError();
+       return new TrieIterator();
     }
 
+    public class TrieIterator implements Iterator<String>{
+
+        private Stack<Map.Entry<Character, Node>> stackOfEntries = new Stack<>();
+        private Stack<String> stackOfStrings = new Stack<>();
+        private Node current = root;
+        private Node lastNode = null; //Node для последнего выведенного значения
+        private Node lastNodeParent = null; //Родитель Node, на котором было выведено значения
+        private String currentString = "";
+        private String lastString = ""; //Последняя выведенная строка
+
+
+        @Override
+        //Трудоёмкость O(1)
+        //Ресурсоёмкость O(1)
+        public boolean hasNext() {
+            return !(stackOfEntries.isEmpty() && current.children.isEmpty());
+        }
+
+        @Override
+        //Трудоёмкость O(log(N))
+        //Ресурсоёмкость O(1)
+        public String next() {
+            String result = null;
+            while (hasNext() && result == null) {
+                    Set<Map.Entry<Character, Node>> entrySet = current.children.entrySet();
+                    List<Map.Entry<Character, Node>> listOfEntriesToAdd = new ArrayList<>(entrySet);
+                    listOfEntriesToAdd.sort(Map.Entry.comparingByKey());
+                    for (Map.Entry<Character, Node> element: listOfEntriesToAdd) {
+                        if (element.getKey() == (char) 0) {
+                            result = currentString;
+                            lastString = currentString;
+                            lastNodeParent = lastNode;
+                            lastNode = current;
+                        }
+                        else {
+                            stackOfEntries.push(element);
+                            stackOfStrings.push(currentString);
+                        }
+                    } if (stackOfEntries.isEmpty()) current = current.children.get((char) 0);
+                    else {
+                        Map.Entry<Character, Node> currentEntry = stackOfEntries.pop();
+                        current = currentEntry.getValue();
+                        currentString = stackOfStrings.pop() + currentEntry.getKey();
+                    }
+                }
+             if (result == null) throw new IllegalStateException();
+             else return result;
+            }
+
+        @Override
+        public void remove() {
+            throw new NotImplementedError();
+            /*if (lastNode == null) throw new IllegalStateException();
+            else lastNode.children.remove((char) 0);
+            lastNode = null;
+            size--;*/
+        }
+    }
 }
