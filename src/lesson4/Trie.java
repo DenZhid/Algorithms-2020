@@ -98,13 +98,11 @@ public class Trie extends AbstractSet<String> implements Set<String> {
 
     public class TrieIterator implements Iterator<String>{
 
-        private Stack<Map.Entry<Character, Node>> stackOfEntries = new Stack<>();
-        private Stack<String> stackOfStrings = new Stack<>();
+        private final Stack<Map.Entry<Character, Node>> stackOfEntries = new Stack<>();
+        private final Stack<String> stackOfStrings = new Stack<>();
         private Node current = root;
         private Node lastNode = null; //Node для последнего выведенного значения
-        private Node lastNodeParent = null; //Родитель Node, на котором было выведено значения
         private String currentString = "";
-        private String lastString = ""; //Последняя выведенная строка
 
 
         @Override
@@ -126,8 +124,6 @@ public class Trie extends AbstractSet<String> implements Set<String> {
                     for (Map.Entry<Character, Node> element: listOfEntriesToAdd) {
                         if (element.getKey() == (char) 0) {
                             result = currentString;
-                            lastString = currentString;
-                            lastNodeParent = lastNode;
                             lastNode = current;
                         }
                         else {
@@ -142,12 +138,13 @@ public class Trie extends AbstractSet<String> implements Set<String> {
                     }
                 }
              if (result == null) throw new IllegalStateException();
-             else return result;
+             else {
+                 return result;
+             }
             }
 
         @Override
         public void remove() {
-            throw new NotImplementedError();
             /*if (lastNode == null) throw new IllegalStateException();
             else lastNode.children.remove((char) 0);
             lastNode = null;

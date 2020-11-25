@@ -1,6 +1,5 @@
 package lesson5;
 
-import kotlin.NotImplementedError;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractSet;
@@ -8,6 +7,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class OpenAddressingSet<T> extends AbstractSet<T> {
+
+    private final Object del = "deleted";
 
     private final int bits;
 
@@ -67,7 +68,7 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
         int startingIndex = startingIndex(t);
         int index = startingIndex;
         Object current = storage[index];
-        while (current != null) {
+        while (current != null && current != del) {
             if (current.equals(t)) {
                 return false;
             }
@@ -94,8 +95,19 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
      * Средняя
      */
     @Override
+    //Трудоёмкость O(N)
+    //Ресурсоёмкость O(1)
     public boolean remove(Object o) {
-        return super.remove(o);
+        int index = startingIndex(o);
+        while (storage[index] != null && storage[index] != del) {
+            if (storage[index].equals(o)) {
+                storage[index] = del;
+                size--;
+                return true;
+            }
+            index++;
+        }
+        return false;
     }
 
     /**
@@ -111,7 +123,48 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        // TODO
-        throw new NotImplementedError();
+        return new OpenAddressingSetIterator();
+    }
+
+    public class OpenAddressingSetIterator implements Iterator<T>{
+
+        int currentIndex = 0;
+        Object current = null;
+        int count = 0;
+
+        @Override
+        //Трудоёмкость O(1)
+        //Ресурсоёмкость O(1)
+        public boolean hasNext() {
+            return count < size;
+        }
+
+        @Override
+        //Трудоёмкость O(N)
+        //Ресурсоёмкость O(1)
+        public T next() {
+            T result = null;
+            while (result == null && hasNext()) {
+                current = storage[currentIndex];
+                    if (current != null && current != del) {
+                        result = (T) current;
+                    }
+                    currentIndex++;
+                }
+            if (result == null) throw new IllegalStateException();
+            count++;
+            return result;
+        }
+
+        @Override
+        //Трудоёмкость O(1)
+        //Ресурсоёмкость O(1)
+        public void remove() {
+            if (current == null || current == del) throw new IllegalStateException();
+            storage[currentIndex - 1] = del;
+            current = null;
+            size--;
+            count--;
+        }
     }
 }
