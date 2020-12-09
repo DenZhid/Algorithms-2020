@@ -75,7 +75,41 @@ abstract class AbstractOpenAddressingSetTest {
                     "The size of the set is not as expected."
                 )
             }
-        }
+        }//Обычные случаи
+        val bitsNumber = random.nextInt(4) + 6
+        val openAddressingSet = create<Int>(bitsNumber)
+        for (i in 1..100000) {
+            val firstInt = random.nextInt(32)
+            val secondInt = firstInt + (1 shl bitsNumber)
+            openAddressingSet += secondInt
+            openAddressingSet += firstInt
+            val expectedSize = openAddressingSet.size - 1
+            assertTrue(
+                openAddressingSet.remove(secondInt),
+                "An element wasn't removed contrary to expected."
+            )
+            assertFalse(
+                secondInt in openAddressingSet,
+                "A supposedly removed element is still in the set."
+            )
+            assertTrue(
+                firstInt in openAddressingSet,
+                "The removal of the element prevented access to the other elements."
+            )
+            assertEquals(
+                expectedSize, openAddressingSet.size,
+                "The size of the set is not as expected."
+            )
+            assertFalse(
+                openAddressingSet.remove(secondInt),
+                "A removed element was supposedly removed twice."
+            )
+            assertEquals(
+                expectedSize, openAddressingSet.size,
+                "The size of the set is not as expected."
+            )
+        }//Длинный случай
+        //Некоторые краевые случаи рассмотрены в предыдущих тестах
     }
 
     protected fun doIteratorTest() {
@@ -117,7 +151,7 @@ abstract class AbstractOpenAddressingSetTest {
                 openAddressingSetIter.next()
             }
             println("All clear!")
-        }
+        }//Обычные случаи
     }
 
     protected fun doIteratorRemoveTest() {

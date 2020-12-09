@@ -2,6 +2,7 @@ package lesson7;
 
 import kotlin.NotImplementedError;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -18,8 +19,34 @@ public class JavaDynamicTasks {
      * Если есть несколько самых длинных общих подпоследовательностей, вернуть любую из них.
      * При сравнении подстрок, регистр символов *имеет* значение.
      */
+    //Трудоёмкость (N*M)
+    //Ресурсоёмкость (N*M), где N и М - длины соответствующиъ строк
     public static String longestCommonSubSequence(String first, String second) {
-        throw new NotImplementedError();
+        int[][] matrix = fillMatrix(first, second);
+        StringBuilder result = new StringBuilder();
+        int x = first.length();
+        int y = second.length();
+        while (x >= 1 && y >= 1) {
+            if (first.charAt(x - 1) == second.charAt(y - 1)) {
+                result.append(first.charAt(x - 1));
+                x--;
+                y--;
+            }
+            else if (matrix[x - 1][y] > matrix[x][y - 1]) x--;
+            else y--;
+        }
+        return result.reverse().toString();
+    } //Исправить OutOfBound
+
+    private static int[][] fillMatrix(String first, String second) {
+        int[][] result = new int[first.length() + 1][second.length() + 1];
+        for (int x = 1; x <= first.length(); x++) {
+            for (int y = 1; y <= second.length(); y++) {
+                if (first.charAt(x - 1) == second.charAt(y - 1)) result[x][y] = result[x - 1][y - 1] + 1;
+                else result[x][y] = Math.max(result[x][y - 1], result[x - 1][y]);
+            }
+        }
+        return result;
     }
 
     /**
@@ -36,7 +63,27 @@ public class JavaDynamicTasks {
      */
     public static List<Integer> longestIncreasingSubSequence(List<Integer> list) {
         throw new NotImplementedError();
+        /*List<Integer> numbers = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
+        numbers.add(0, Integer.MIN_VALUE);
+        indices.add(0, 0 );
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            int j = binarySearchOfBigger(list, size - 1, list.get(i));
+            if (numbers.get(j - 1) < list.get(i) && list.get(i) < numbers.get(j)) numbers.add(list.get(j));
+         }*/
     }
+
+    /*private static int binarySearchOfBigger(List<Integer> list, int end, int item) {
+        int begin = 0;
+        int pos = (begin + end) / 2;
+        while ((list.get(pos) <= item) && (begin <= end)) {
+            if (list.get(pos) > item) end = pos - 1;
+            else begin = pos - 1;
+            pos = (begin + end) / 2;
+        }
+        return pos;
+    }*/
 
     /**
      * Самый короткий маршрут на прямоугольном поле.

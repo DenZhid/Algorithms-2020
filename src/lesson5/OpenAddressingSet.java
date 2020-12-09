@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class OpenAddressingSet<T> extends AbstractSet<T> {
 
-    private final Object del = "deleted";
+    private enum  Condition { DELETED }
 
     private final int bits;
 
@@ -68,7 +68,7 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
         int startingIndex = startingIndex(t);
         int index = startingIndex;
         Object current = storage[index];
-        while (current != null && current != del) {
+        while (current != null && current != Condition.DELETED) {
             if (current.equals(t)) {
                 return false;
             }
@@ -99,9 +99,9 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
     //Ресурсоёмкость O(1)
     public boolean remove(Object o) {
         int index = startingIndex(o);
-        while (storage[index] != null && storage[index] != del) {
+        while (storage[index] != null && storage[index] != Condition.DELETED) {
             if (storage[index].equals(o)) {
-                storage[index] = del;
+                storage[index] = Condition.DELETED;
                 size--;
                 return true;
             }
@@ -146,7 +146,7 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
             T result = null;
             while (result == null && hasNext()) {
                 current = storage[currentIndex];
-                    if (current != null && current != del) {
+                    if (current != null && current != Condition.DELETED) {
                         result = (T) current;
                     }
                     currentIndex++;
@@ -160,8 +160,8 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
         //Трудоёмкость O(1)
         //Ресурсоёмкость O(1)
         public void remove() {
-            if (current == null || current == del) throw new IllegalStateException();
-            storage[currentIndex - 1] = del;
+            if (current == null || current == Condition.DELETED) throw new IllegalStateException();
+            storage[currentIndex - 1] = Condition.DELETED;
             current = null;
             size--;
             count--;

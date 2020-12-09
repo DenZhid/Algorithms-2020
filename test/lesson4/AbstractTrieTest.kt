@@ -108,7 +108,46 @@ abstract class AbstractTrieTest {
                 trieIter.next()
             }
             println("All clear!")
-        }
+        } //Обычные случаи
+        for (iteration in 1..10) {
+            val controlSet = mutableSetOf<String>()
+            for (i in 1..100) {
+                val string = random.nextString("abcdefgh", 1, 15)
+                controlSet.add(string)
+            }
+            println("Control set: $controlSet")
+            val trieSet = create()
+            assertFalse(
+                trieSet.iterator().hasNext(),
+                "Iterator of an empty set should not have any next elements."
+            )
+            for (element in controlSet) {
+                trieSet += element
+            }
+            val iterator1 = trieSet.iterator()
+            val iterator2 = trieSet.iterator()
+            println("Checking if calling hasNext() changes the state of the iterator...")
+            while (iterator1.hasNext()) {
+                assertEquals(
+                    iterator2.next(), iterator1.next(),
+                    "Calling TrieIterator.hasNext() changes the state of the iterator."
+                )
+            }
+            val trieIter = trieSet.iterator()
+            println("Checking if the iterator traverses the entire set...")
+            while (trieIter.hasNext()) {
+                controlSet.remove(trieIter.next())
+            }
+            assertTrue(
+                controlSet.isEmpty(),
+                "TrieIterator doesn't traverse the entire set."
+            )
+            assertFailsWith<IllegalStateException>("Something was supposedly returned after the elements ended") {
+                trieIter.next()
+            }
+            println("All clear!")
+        }//Длинные случаи
+        //Некоторые краевые случаи проверены в предыдущих тестах
     }
 
     protected fun doIteratorRemoveTest() {

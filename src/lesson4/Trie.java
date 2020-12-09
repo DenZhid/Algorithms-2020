@@ -103,13 +103,14 @@ public class Trie extends AbstractSet<String> implements Set<String> {
         private Node current = root;
         private Node lastNode = null; //Node для последнего выведенного значения
         private String currentString = "";
+        int count = 0;
 
 
         @Override
         //Трудоёмкость O(1)
         //Ресурсоёмкость O(1)
         public boolean hasNext() {
-            return !(stackOfEntries.isEmpty() && current.children.isEmpty());
+            return count < size;
         }
 
         @Override
@@ -139,16 +140,21 @@ public class Trie extends AbstractSet<String> implements Set<String> {
                 }
              if (result == null) throw new IllegalStateException();
              else {
+                 count++;
                  return result;
              }
             }
 
         @Override
+        //Трудоёмкость O(1)
+        //Ресурсоёмкость O(1)
         public void remove() {
-            /*if (lastNode == null) throw new IllegalStateException();
+            if (lastNode == null) throw new IllegalStateException();
             else lastNode.children.remove((char) 0);
             lastNode = null;
-            size--;*/
+            count--;
+            size--;
+
         }
     }
 }
