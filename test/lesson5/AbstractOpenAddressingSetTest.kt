@@ -189,7 +189,6 @@ abstract class AbstractOpenAddressingSetTest {
             }
             println("All clear!")
         } //Длинные случаи
-        //В каждом тесте просматривается особый случай по итерированию пустого OpenAddressingSet
     }
 
     protected fun doIteratorRemoveTest() {
@@ -300,6 +299,5 @@ abstract class AbstractOpenAddressingSetTest {
             }
             println("All clear!")
         } //Длинные случаи
-        //Некоторые особые случаи, такие как удаление до начала итерирования и тп. рассмотрены в предыдущих тестах
     }
 }
