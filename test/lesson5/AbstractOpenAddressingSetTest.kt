@@ -108,8 +108,7 @@ abstract class AbstractOpenAddressingSetTest {
                 expectedSize, openAddressingSet.size,
                 "The size of the set is not as expected."
             )
-        }//Длинный случай
-        //Некоторые краевые случаи рассмотрены в предыдущих тестах
+        } //Длинный случай
     }
 
     protected fun doIteratorTest() {

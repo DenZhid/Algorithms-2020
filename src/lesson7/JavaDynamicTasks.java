@@ -2,8 +2,7 @@ package lesson7;
 
 import kotlin.NotImplementedError;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class JavaDynamicTasks {
@@ -36,7 +35,7 @@ public class JavaDynamicTasks {
             else y--;
         }
         return result.reverse().toString();
-    } //Исправить OutOfBound
+    }
 
     private static int[][] fillMatrix(String first, String second) {
         int[][] result = new int[first.length() + 1][second.length() + 1];
@@ -61,29 +60,35 @@ public class JavaDynamicTasks {
      * то вернуть ту, в которой числа расположены раньше (приоритет имеют первые числа).
      * В примере ответами являются 2, 8, 9, 12 или 2, 5, 9, 12 -- выбираем первую из них.
      */
+    //Трудоёмкость O(N^2)
+    //Ресурсоёмкость O(N^2)
     public static List<Integer> longestIncreasingSubSequence(List<Integer> list) {
         throw new NotImplementedError();
-        /*List<Integer> numbers = new ArrayList<>();
-        List<Integer> indices = new ArrayList<>();
-        numbers.add(0, Integer.MIN_VALUE);
-        indices.add(0, 0 );
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-            int j = binarySearchOfBigger(list, size - 1, list.get(i));
-            if (numbers.get(j - 1) < list.get(i) && list.get(i) < numbers.get(j)) numbers.add(list.get(j));
-         }*/
-    }
-
-    /*private static int binarySearchOfBigger(List<Integer> list, int end, int item) {
-        int begin = 0;
-        int pos = (begin + end) / 2;
-        while ((list.get(pos) <= item) && (begin <= end)) {
-            if (list.get(pos) > item) end = pos - 1;
-            else begin = pos - 1;
-            pos = (begin + end) / 2;
+        /*if (list.size() == 0) return list;
+        int[] numbers = new int[list.size()];
+        int[] indices = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            numbers[i] = 1;
+            indices[i] = -1;
+            for (int j = 0; j < i; j++) {
+                if (list.get(j) < list.get(i) && (1 + numbers[j] > numbers[i])) {
+                    numbers[i] = 1 + numbers[j];
+                    indices[i] = j;
+                }
+            }
         }
-        return pos;
-    }*/
+        int num = numbers[0];
+        int pos = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (numbers[i] > num) pos = i;
+        }
+        List<Integer> result = new ArrayList<>();
+        while (pos != -1) {
+            result.add(0, list.get(pos));
+            pos = indices[pos];
+        }
+        return result;*/
+    }
 
     /**
      * Самый короткий маршрут на прямоугольном поле.

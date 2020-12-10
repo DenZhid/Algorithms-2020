@@ -109,9 +109,10 @@ abstract class AbstractTrieTest {
             }
             println("All clear!")
         } //Обычные случаи
+
         for (iteration in 1..10) {
             val controlSet = mutableSetOf<String>()
-            for (i in 1..100) {
+            for (i in 1..1000) {
                 val string = random.nextString("abcdefgh", 1, 15)
                 controlSet.add(string)
             }
@@ -146,8 +147,73 @@ abstract class AbstractTrieTest {
                 trieIter.next()
             }
             println("All clear!")
-        }//Длинные случаи
-        //Некоторые краевые случаи проверены в предыдущих тестах
+        } //Длинные случаи
+
+        val controlSet1 = mutableSetOf<String>()
+        println("Control set: $controlSet1")
+        val trieSet1 = create()
+        assertFalse(
+            trieSet1.iterator().hasNext(),
+            "Iterator of an empty set should not have any next elements."
+        )
+        for (element in controlSet1) {
+            trieSet1 += element
+        }
+        val iteratorOfFirstTrieSet1 = trieSet1.iterator()
+        val iteratorOfFirstTrieSet2 = trieSet1.iterator()
+        println("Checking if calling hasNext() changes the state of the iterator...")
+        while (iteratorOfFirstTrieSet1.hasNext()) {
+            assertEquals(
+                iteratorOfFirstTrieSet2.next(), iteratorOfFirstTrieSet1.next(),
+                "Calling TrieIterator.hasNext() changes the state of the iterator."
+            )
+        }
+        val trieIter1 = iteratorOfFirstTrieSet1.iterator()
+        println("Checking if the iterator traverses the entire set...")
+        while (trieIter1.hasNext()) {
+            controlSet1.remove(trieIter1.next())
+        }
+        assertTrue(
+            controlSet1.isEmpty(),
+            "TrieIterator doesn't traverse the entire set."
+        )
+        assertFailsWith<IllegalStateException>("Something was supposedly returned after the elements ended") {
+            trieIter1.next()
+        }
+        println("All clear!") //Особый случай (Пустое дерево)
+
+        val controlSet2 = mutableSetOf("a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh")
+        println("Control set: $controlSet2")
+        val trieSet2 = create()
+        assertFalse(
+            trieSet2.iterator().hasNext(),
+            "Iterator of an empty set should not have any next elements."
+        )
+        for (element in controlSet2) {
+            trieSet2 += element
+        }
+        val iteratorOfSecondTrieSet1 = trieSet2.iterator()
+        val iteratorOfSecondTrieSet2 = trieSet2.iterator()
+        println("Checking if calling hasNext() changes the state of the iterator...")
+        while (iteratorOfSecondTrieSet1.hasNext()) {
+            assertEquals(
+                iteratorOfSecondTrieSet2.next(), iteratorOfSecondTrieSet1.next(),
+                "Calling TrieIterator.hasNext() changes the state of the iterator."
+            )
+        }
+        val trieIter2 = trieSet2.iterator()
+        println("Checking if the iterator traverses the entire set...")
+        while (trieIter2.hasNext()) {
+            controlSet2.remove(trieIter2.next())
+        }
+        assertTrue(
+            controlSet2.isEmpty(),
+            "TrieIterator doesn't traverse the entire set."
+        )
+        assertFailsWith<IllegalStateException>("Something was supposedly returned after the elements ended") {
+            trieIter2.next()
+        }
+        println("All clear!") //Особый случай (Дерево вытянутое по одной ветке и имеющее значение в каждом узле)
     }
 
     protected fun doIteratorRemoveTest() {
@@ -208,7 +274,60 @@ abstract class AbstractTrieTest {
                 )
             }
             println("All clear!")
+        } //Обычные случаи
+        val controlSet = mutableSetOf<String>()
+        for (i in 1..1000) {
+            val string = random.nextString("abcdefgh", 1, 15)
+            controlSet.add(string)
         }
+        println("Initial set: $controlSet")
+        val trieSet = create()
+        val setToRemove = mutableSetOf<String>()
+        for (element in controlSet) {
+            setToRemove.add(element)
+            trieSet += element
+        }
+        for (element in setToRemove) {
+            controlSet.remove(element)
+            println("Control set: $controlSet")
+            println("Removing element \"$element\" from trie set through the iterator...")
+            val iterator = trieSet.iterator()
+            assertFailsWith<IllegalStateException>("Something was supposedly deleted before the iteration started") {
+                iterator.remove()
+            }
+            var counter = trieSet.size
+            while (iterator.hasNext()) {
+                val elementOfIterator = iterator.next()
+                counter--
+                if (elementOfIterator == element) {
+                    iterator.remove()
+                    assertFailsWith<IllegalStateException>("Trie.remove() was successfully called twice in a row.") {
+                        iterator.remove()
+                    }
+                }
+            }
+            assertEquals(
+                0, counter,
+                "TrieIterator.remove() changed iterator position: ${abs(counter)} elements were ${if (counter > 0) "skipped" else "revisited"}."
+            )
+            assertEquals(
+                controlSet.size, trieSet.size,
+                "The size of the set is incorrect: was ${trieSet.size}, should've been ${controlSet.size}."
+            )
+            for (elementOfControlSet in controlSet) {
+                assertTrue(
+                    trieSet.contains(elementOfControlSet),
+                    "Trie set doesn't have the element $elementOfControlSet from the control set."
+                )
+            }
+            for (elementOfTrieSet in trieSet) {
+                assertTrue(
+                    controlSet.contains(elementOfTrieSet),
+                    "Trie set has the element $elementOfTrieSet that is not in control set."
+                )
+            }
+            println("All clear!")
+        }
+        assertTrue(trieSet.isEmpty()) //Особый случай (удаление всех элементов большого дерева)
     }
-
 }

@@ -114,8 +114,8 @@ public class Trie extends AbstractSet<String> implements Set<String> {
         }
 
         @Override
-        //Трудоёмкость O(log(N))
-        //Ресурсоёмкость O(1)
+        //Трудоёмкость O(N)
+        //Ресурсоёмкость O(1), где N - количество всех узлов в дереве.
         public String next() {
             String result = null;
             while (hasNext() && result == null) {

@@ -4,18 +4,21 @@ import kotlin.test.assertEquals
 
 abstract class AbstractDynamicTests {
     fun longestCommonSubSequence(longestCommonSubSequence: (String, String) -> String) {
-        assertEquals("", longestCommonSubSequence("мой мир", "я"))
-        assertEquals("1", longestCommonSubSequence("1", "1"))
-        assertEquals("13", longestCommonSubSequence("123", "13"))
-        assertEquals("здс", longestCommonSubSequence("здравствуй мир", "мы здесь"))
-        assertEquals("emt ole", longestCommonSubSequence("nematode knowledge", "empty bottle"))
+        assertEquals(
+            "",
+            longestCommonSubSequence("мой мир", "я")
+        ) //Особый случай (В результате получается пустая строка)
+        assertEquals("1", longestCommonSubSequence("1", "1")) //Особый случай (Одинаковые строки)
+        assertEquals("13", longestCommonSubSequence("123", "13")) //Обычный случай
+        assertEquals("здс", longestCommonSubSequence("здравствуй мир", "мы здесь")) //Обычный случай
+        assertEquals("emt ole", longestCommonSubSequence("nematode knowledge", "empty bottle")) //Обычный случай
         val expectedLength = "e kerwelkkd r".length
         assertEquals(
             expectedLength, longestCommonSubSequence(
                 "oiweijgw kejrhwejelkrw kjhdkfjs hrk",
                 "perhkhk lerkerorwetp lkjklvvd durltr"
             ).length, "Answer must have length of $expectedLength, e.g. 'e kerwelkkd r' or 'erhlkrw kjk r'"
-        )
+        ) //Обычный случай
         val expectedLength2 = """ дд саы чтых,
 евшнео ваа се сви дн.
         """.trimIndent().length
@@ -34,7 +37,12 @@ abstract class AbstractDynamicTests {
 Наследник всех своих родных.
                 """.trimIndent()
             ).length, "Answer must have length of $expectedLength2"
-        )
+        ) //Длинный случай
+        assertEquals(
+            "",
+            longestCommonSubSequence("", "")
+        ) //Особый случай (Пустые строк)
+        assertEquals("12345", longestCommonSubSequence("12345", "12345")) //Особый случай (Равные строки)
     }
 
     fun longestIncreasingSubSequence(longestIncreasingSubSequence: (List<Int>) -> List<Int>) {
